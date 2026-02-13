@@ -76,7 +76,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyCheHRcaj9BuNV7AjtxFDU6OqTek0MyzsE",
+            apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
             authDomain: "poppy-playtime-5-countdown.firebaseapp.com",
             databaseURL: "https://poppy-playtime-5-countdown-default-rtdb.firebaseio.com",
             projectId: "poppy-playtime-5-countdown",
@@ -179,3 +179,4 @@
 </body>
 
 </html>
+
