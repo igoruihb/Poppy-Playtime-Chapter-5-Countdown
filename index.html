@@ -17,10 +17,7 @@
         body.disco .main-bg { animation: disco-bg 0.5s infinite linear; filter: brightness(1) contrast(1.2); }
         body.disco .vignette { background: transparent; }
         .drop { position: fixed; top: -50px; width: 3px; height: 30px; background: var(--bright-red); z-index: 9997; pointer-events: none; animation: fall linear forwards; }
-        
-        /* Modified overlay-content to handle show/hide */
         .overlay-content { position: relative; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; text-align: center; }
-        
         #header-area { transition: opacity 1s, transform 1s; min-height: 150px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
         .timer { font-size: 4rem; text-shadow: 3px 3px 0px var(--blood-red); transition: all 0.5s; }
         
@@ -29,18 +26,11 @@
         .pp-btn { 
             padding: 15px 25px; font-family: 'Press Start 2P'; font-size: 12px; 
             text-decoration: none; color: white; border: 3px solid white; 
-            background: rgba(0,0,0,0.5); transition: 0.3s; cursor: pointer;
+            background: rgba(0,0,0,0.5); transition: 0.3s; 
         }
         .pp-btn:hover { background: white; color: black; box-shadow: 0 0 20px white; }
         .kreek-btn { border-color: #ff0000; color: #ff0000; }
         .kreek-btn:hover { background: #ff0000; color: white; box-shadow: 0 0 20px #ff0000; }
-
-        /* --- START SCREEN STYLE --- */
-        #start-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; justify-content: center; align-items: center;
-            z-index: 9999;
-        }
 
         .out-now-text { display: inline-block; font-size: 3rem; color: var(--bright-red); animation: back-and-forth 1.5s ease-in-out infinite, text-glow 1s infinite; }
         .admin-text { color: var(--glitch-cyan); text-shadow: 4px 0 var(--bright-red); animation: text-glitch 0.1s infinite; font-size: 1.3rem; }
@@ -63,7 +53,7 @@
     </style>
 </head>
 <body id="b">
-    <audio id="bgMusic" loop>
+    <audio id="bgMusic" loop autoplay>
         <source src="poppy.mp3" type="audio/mpeg">
     </audio>
 
@@ -75,11 +65,7 @@
     
     <div id="admin-box"><input type="text" id="admin-input" placeholder="F2: FLASHBANG, DISCO MODE, BLOOD RAIN, RESET"></div>
     
-    <div id="start-screen">
-        <button id="start-btn" class="pp-btn" style="font-size: 20px;">CLICK TO START</button>
-    </div>
-
-    <div id="main-content" class="overlay-content" style="display: none;">
+    <div class="overlay-content">
         <div id="header-area">
             <div id="default-msg">
                 <div style="font-size: 1.2rem;">POPPY PLAYTIME: CHAPTER 5</div>
@@ -109,22 +95,6 @@
         const adminInput = document.getElementById('admin-input');
         const adminBox = document.getElementById('admin-box');
         let rainInterval = null;
-
-        // --- NEW START BUTTON LOGIC ---
-        const startBtn = document.getElementById('start-btn');
-        const startScreen = document.getElementById('start-screen');
-        const mainContent = document.getElementById('main-content');
-        const music = document.getElementById('bgMusic');
-
-        startBtn.addEventListener('click', () => {
-            // 1. Play Music
-            music.play();
-            // 2. Hide Start Button
-            startScreen.style.display = 'none';
-            // 3. Show Main Content
-            mainContent.style.display = 'flex';
-        });
-        // ------------------------------
 
         db.ref('globalMessage').on('value', (snapshot) => {
             const msg = snapshot.val();
@@ -209,6 +179,19 @@
 
         setInterval(update, 1000);
         update();
+
+        // --- AUTOPLAY ATTEMPT ---
+        window.onload = function() {
+            const music = document.getElementById('bgMusic');
+            // This tries to play immediately
+            music.play().catch(error => {
+                console.log("Autoplay was blocked by browser - waiting for user interaction");
+                // Fallback: If browser blocks it, wait for first click
+                window.addEventListener('click', () => {
+                    music.play();
+                }, { once: true });
+            });
+        };
     </script>
 </body>
 </html>
