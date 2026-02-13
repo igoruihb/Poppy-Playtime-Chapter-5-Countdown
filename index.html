@@ -53,6 +53,10 @@
     </style>
 </head>
 <body id="b">
+    <audio id="bgMusic" loop autoplay>
+        <source src="poppy.mp3" type="audio/mpeg">
+    </audio>
+
     <div id="flashbang-overlay"></div>
     <div class="main-bg"></div>
     <div class="static-overlay"></div>
@@ -175,9 +179,19 @@
 
         setInterval(update, 1000);
         update();
+
+        // --- AUTOPLAY ATTEMPT ---
+        window.onload = function() {
+            const music = document.getElementById('bgMusic');
+            // This tries to play immediately
+            music.play().catch(error => {
+                console.log("Autoplay was blocked by browser - waiting for user interaction");
+                // Fallback: If browser blocks it, wait for first click
+                window.addEventListener('click', () => {
+                    music.play();
+                }, { once: true });
+            });
+        };
     </script>
 </body>
-
 </html>
-
-
