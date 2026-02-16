@@ -8,86 +8,96 @@
     <style>
         :root { --blood-red: #8b0000; --bright-red: #ff0000; --glitch-cyan: #00ffff; }
         body, html { height: 100%; margin: 0; background-color: #000; font-family: 'Press Start 2P', cursive; color: white; overflow: hidden; }
+        
+        /* Background & Overlays */
         .main-bg { background-image: url('image_c53efb.jpg'); background-size: cover; background-position: center; height: 115vh; width: 115vw; position: fixed; top: -7%; left: -7%; z-index: 1; transition: all 1.5s ease; filter: brightness(0.6); }
-        .static-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://upload.wikimedia.org/wikipedia/commons/b/b1/Static_noise.png'); opacity: 0.03; z-index: 8; pointer-events: none; mix-blend-mode: screen; display: none; }
+        .static-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://upload.wikimedia.org/wikipedia/commons/b/b1/Static_noise.png'); opacity: 0.03; z-index: 8; pointer-events: none; mix-blend-mode: screen; }
         .strobe { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--blood-red); z-index: 7; opacity: 0; pointer-events: none; mix-blend-mode: overlay; }
         .vignette { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, transparent 40%, black 150%); z-index: 5; pointer-events: none; }
         #flashbang-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: white; z-index: 100000; opacity: 0; pointer-events: none; }
-        .flash-active { animation: flashbang-anim 3s ease-out forwards; }
-        body.disco .main-bg { animation: disco-bg 0.5s infinite linear; filter: brightness(1) contrast(1.2); }
-        body.disco .vignette { background: transparent; }
-        .drop { position: fixed; top: -50px; width: 3px; height: 30px; background: var(--bright-red); z-index: 9997; pointer-events: none; animation: fall linear forwards; }
         
-        /* Modified overlay-content to handle show/hide */
+        /* UI Layout */
         .overlay-content { position: relative; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; text-align: center; }
+        #header-area { transition: opacity 1s, transform 1s; min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .timer { font-size: 4rem; text-shadow: 3px 3px 0px var(--blood-red); margin: 20px 0; transition: all 0.5s; }
         
-        #header-area { transition: opacity 1s, transform 1s; min-height: 150px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-        .timer { font-size: 4rem; text-shadow: 3px 3px 0px var(--blood-red); transition: all 0.5s; }
-        
-        /* --- BUTTON STYLES --- */
-        .btn-container { margin-top: 30px; display: flex; flex-direction: column; gap: 15px; }
+        /* Buttons */
+        .btn-container { margin-top: 30px; display: none; flex-direction: column; gap: 20px; z-index: 100; }
         .pp-btn { 
-            padding: 15px 25px; font-family: 'Press Start 2P'; font-size: 12px; 
-            text-decoration: none; color: white; border: 3px solid white; 
-            background: rgba(0,0,0,0.5); transition: 0.3s; cursor: pointer;
+            padding: 15px 25px; 
+            font-family: 'Press Start 2P'; 
+            font-size: 12px; 
+            text-decoration: none; 
+            color: white; 
+            border: 3px solid white; 
+            background: rgba(0,0,0,0.5); 
+            transition: 0.3s; 
+            cursor: pointer;
+            pointer-events: auto;
         }
         .pp-btn:hover { background: white; color: black; box-shadow: 0 0 20px white; }
-        .kreek-btn { border-color: #ff0000; color: #ff0000; }
-        .kreek-btn:hover { background: #ff0000; color: white; box-shadow: 0 0 20px #ff0000; }
 
-        /* --- START SCREEN STYLE --- */
-        #start-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; justify-content: center; align-items: center;
-            z-index: 9999;
-        }
+        /* Text Effects */
+        .admin-text { color: var(--glitch-cyan); text-shadow: 4px 0 var(--bright-red); animation: text-glitch 0.1s infinite; font-size: 1.1rem; }
+        .out-now-text { display: inline-block; font-size: 3rem; color: var(--bright-red); animation: back-and-forth 1.5s ease-in-out infinite, text-glow 1s infinite; margin-bottom: 20px; }
 
-        .out-now-text { display: inline-block; font-size: 3rem; color: var(--bright-red); animation: back-and-forth 1.5s ease-in-out infinite, text-glow 1s infinite; }
-        .admin-text { color: var(--glitch-cyan); text-shadow: 4px 0 var(--bright-red); animation: text-glitch 0.1s infinite; font-size: 1.3rem; }
-        #admin-box { position: fixed; top: -150px; left: 50%; transform: translateX(-50%); width: 450px; background: rgba(0, 0, 0, 0.95); border: 3px solid var(--glitch-cyan); padding: 20px; z-index: 10000; transition: top 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); text-align: center; }
-        #admin-box.open { top: 30px; }
-        #admin-input { width: 90%; background: #000; border: 1px solid #fff; color: var(--glitch-cyan); font-family: 'Press Start 2P', cursive; padding: 12px; font-size: 10px; outline: none; }
-        
-        @keyframes flashbang-anim { 0% { opacity: 1; } 100% { opacity: 0; } }
-        @keyframes disco-bg { 0% { background-color: #ff0000; } 20% { background-color: #ff00ff; } 40% { background-color: #0000ff; } 60% { background-color: #00ffff; } 80% { background-color: #00ff00; } 100% { background-color: #ffff00; } }
+        /* Commands / Events CSS */
+        .drop { position: fixed; top: -50px; width: 3px; height: 35px; background: var(--bright-red); z-index: 99; pointer-events: none; animation: fall linear forwards; box-shadow: 0 0 5px var(--blood-red); }
+        .huggy-sprite { position: fixed; width: 120px; z-index: 9; pointer-events: none; animation: run-around 3s linear infinite; }
+        #prototype-img { position: fixed; left: -600px; top: 25%; width: 450px; z-index: 9; pointer-events: none; }
+        .prototype-peek { animation: peek-out 4s forwards; }
+
+        /* Keyframes */
         @keyframes fall { to { transform: translateY(110vh); } }
-        @keyframes back-and-forth { 0%, 100% { transform: translateX(-25px); } 50% { transform: translateX(25px); } }
+        @keyframes flashbang-anim { 0% { opacity: 1; } 100% { opacity: 0; } }
+        @keyframes back-and-forth { 0%, 100% { transform: translateX(-20px); } 50% { transform: translateX(20px); } }
         @keyframes text-glow { 0%, 100% { text-shadow: 0 0 10px var(--blood-red); } 50% { text-shadow: 0 0 30px var(--bright-red); } }
         @keyframes violent-shake { 0% { transform: translate(6px, 6px); } 50% { transform: translate(-6px, -6px); } }
         @keyframes text-glitch { 0% { transform: translate(2px, 0); } 50% { transform: translate(-2px, 0); color: #fff; } 100% { transform: translate(0, 0); } }
+        @keyframes strobe-anim { 0%, 100% { opacity: 0; } 50% { opacity: 0.4; } }
+        @keyframes peek-out { 0% { left: -600px; } 20%, 80% { left: 0; } 100% { left: -600px; } }
+        @keyframes run-around { 0% { transform: translate(0,0); } 25% { transform: translate(200px, -150px); } 50% { transform: translate(-150px, 200px); } 100% { transform: translate(0,0); } }
+
+        /* States */
+        body.disco .main-bg { filter: hue-rotate(90deg) brightness(1.2) contrast(1.2); }
         body.cinematic-1m #header-area { opacity: 0; transform: translateY(-20px); }
         body.cinematic-1m .timer { color: var(--bright-red); font-size: 6rem; }
         body.ultra-horror .overlay-content { animation: violent-shake 0.1s infinite; }
         body.ultra-horror .strobe { animation: strobe-anim 0.3s infinite; }
-        @keyframes strobe-anim { 0%, 100% { opacity: 0; } 50% { opacity: 0.4; } }
+        .flash-active { animation: flashbang-anim 3s ease-out forwards; }
+
+        /* Admin UI */
+        #admin-box { position: fixed; top: -150px; left: 50%; transform: translateX(-50%); width: 450px; background: rgba(0,0,0,0.95); border: 3px solid var(--glitch-cyan); padding: 20px; z-index: 10000; transition: top 0.4s; text-align: center; }
+        #admin-box.open { top: 30px; }
+        #admin-input { width: 90%; background: #000; border: 1px solid #fff; color: var(--glitch-cyan); font-family: 'Press Start 2P'; padding: 10px; font-size: 10px; outline: none; }
     </style>
 </head>
 <body id="b">
-    <audio id="bgMusic" loop>
-        <source src="poppy.mp3" type="audio/mpeg">
-    </audio>
-
+    <audio id="bgMusic" loop><source src="poppy.mp3" type="audio/mpeg"></audio>
     <div id="flashbang-overlay"></div>
     <div class="main-bg"></div>
-    <div class="static-overlay"></div>
-    <div class="strobe"></div>
     <div class="vignette"></div>
+    <div class="strobe"></div>
+
+    <img src="prototype.png" id="prototype-img">
     
-    <div id="admin-box"><input type="text" id="admin-input" placeholder="F2: FLASHBANG, DISCO MODE, BLOOD RAIN, RESET"></div>
+    <div id="admin-box"><input type="text" id="admin-input" placeholder="CMD OR MESSAGE + ENTER"></div>
     
-    <div id="start-screen">
+    <div id="start-screen" style="position:fixed; z-index:9999; width:100%; height:100%; display:flex; justify-content:center; align-items:center; background:black;">
         <button id="start-btn" class="pp-btn" style="font-size: 20px;">CLICK TO START</button>
     </div>
 
-    <div id="main-content" class="overlay-content" style="display: none;">
+    <div id="main-content" class="overlay-content" style="display:none;">
         <div id="header-area">
-            <div id="default-msg">
-                <div style="font-size: 1.2rem;">POPPY PLAYTIME: CHAPTER 5</div>
-                <div style="font-size: 0.7rem; color: var(--bright-red); margin-top: 10px;">BROKEN THINGS</div>
-            </div>
+            <div>POPPY PLAYTIME: CHAPTER 5</div>
+            <div style="font-size: 0.7rem; color: var(--bright-red); margin-top: 10px;">BROKEN THINGS</div>
         </div>
         <div id="countdown" class="timer">--:--:--</div>
-        <div id="end-buttons" class="btn-container"></div>
+        
+        <div id="end-buttons" class="btn-container">
+            <a href="https://www.youtube.com/@KreekCraft" target="_blank" class="pp-btn">WATCH KREEKCRAFT</a>
+            <a href="https://store.steampowered.com/app/4100940/Poppy_Playtime__Chapter_5/" target="_blank" class="pp-btn">DOWNLOAD GAME</a>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -97,119 +107,112 @@
             apiKey: "AIzaSyDEYwkfnrJM-FAmpOzlg7W6hfJIGG61QY8",
             authDomain: "poppy-playtime-5-countdown.firebaseapp.com",
             databaseURL: "https://poppy-playtime-5-countdown-default-rtdb.firebaseio.com",
-            projectId: "poppy-playtime-5-countdown",
-            storageBucket: "poppy-playtime-5-countdown.firebasestorage.app",
-            messagingSenderId: "529962524348",
-            appId: "1:529962524348:web:1e68bc421641868b27fab9"
+            projectId: "poppy-playtime-5-countdown"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-        const body = document.getElementById('b');
-        const header = document.getElementById("header-area");
-        const adminInput = document.getElementById('admin-input');
-        const adminBox = document.getElementById('admin-box');
-        let rainInterval = null;
+        
+        let rainInt, huggyInt;
 
-        // --- NEW START BUTTON LOGIC ---
-        const startBtn = document.getElementById('start-btn');
-        const startScreen = document.getElementById('start-screen');
-        const mainContent = document.getElementById('main-content');
-        const music = document.getElementById('bgMusic');
+        document.getElementById('start-btn').onclick = () => {
+            document.getElementById('bgMusic').play().catch(()=>{});
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('main-content').style.display = 'flex';
+        };
 
-        startBtn.addEventListener('click', () => {
-            // 1. Play Music
-            music.play();
-            // 2. Hide Start Button
-            startScreen.style.display = 'none';
-            // 3. Show Main Content
-            mainContent.style.display = 'flex';
+        db.ref('globalMessage').on('value', (s) => {
+            const val = s.val();
+            if(!val) { reset(); return; }
+            processInput(val.toUpperCase(), val);
         });
-        // ------------------------------
 
-        db.ref('globalMessage').on('value', (snapshot) => {
-            const msg = snapshot.val();
-            if (!msg) { resetAll(); return; }
-            if (msg === "FLASHBANG") {
-                const flash = document.getElementById('flashbang-overlay');
-                flash.classList.remove('flash-active');
-                void flash.offsetWidth;
-                flash.classList.add('flash-active');
+        function processInput(upper, original) {
+            if (upper === "FLASHBANG") {
+                const f = document.getElementById('flashbang-overlay');
+                f.classList.remove('flash-active'); void f.offsetWidth; f.classList.add('flash-active');
+                return;
             }
-            if (msg === "DISCO MODE") body.classList.add('disco');
-            if (msg === "BLOOD RAIN") startRain();
-            header.innerHTML = `<span class="admin-text">[DEV/ADMIN]: ${msg}</span>`;
-            body.style.filter = "brightness(3)";
-            setTimeout(() => body.style.filter = "brightness(1)", 150);
-        });
+            if (upper === "DISCO MODE") { document.body.classList.add('disco'); return; }
+            if (upper === "BLOOD RAIN") { startRain(); return; }
+            if (upper === "HUGGY CHAOS") { startHuggyChaos(); return; }
+            if (upper === "PROTOTYPE") {
+                const p = document.getElementById('prototype-img');
+                p.classList.remove('prototype-peek'); void p.offsetWidth; p.classList.add('prototype-peek');
+                return;
+            }
+            document.getElementById('header-area').innerHTML = `<span class="admin-text">[DEV/ADMIN]: ${original}</span>`;
+            document.body.style.filter = "brightness(3)";
+            setTimeout(() => document.body.style.filter = "brightness(1)", 150);
+        }
 
-        function resetAll() {
-            body.classList.remove('disco');
-            stopRain();
-            header.innerHTML = '<div style="font-size: 1.2rem;">POPPY PLAYTIME: CHAPTER 5</div><div style="font-size: 0.7rem; color: var(--bright-red); margin-top: 10px;">BROKEN THINGS</div>';
+        function reset() {
+            document.body.className = '';
+            clearInterval(rainInt); clearInterval(huggyInt);
+            document.querySelectorAll('.drop, .huggy-sprite').forEach(e => e.remove());
+            document.getElementById('header-area').innerHTML = `<div>POPPY PLAYTIME: CHAPTER 5</div><div style="font-size: 0.7rem; color: var(--bright-red); margin-top: 10px;">BROKEN THINGS</div>`;
         }
 
         function startRain() {
-            stopRain();
-            rainInterval = setInterval(() => {
-                const drop = document.createElement('div');
-                drop.className = 'drop';
-                drop.style.left = Math.random() * 100 + 'vw';
-                drop.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
-                document.body.appendChild(drop);
-                setTimeout(() => drop.remove(), 1000);
+            clearInterval(rainInt);
+            rainInt = setInterval(() => {
+                const d = document.createElement('div'); d.className = 'drop';
+                d.style.left = Math.random()*100+'vw'; 
+                d.style.animationDuration = (Math.random()*0.4 + 0.4) + 's';
+                document.body.appendChild(d);
+                setTimeout(() => d.remove(), 1000);
             }, 50);
         }
-        function stopRain() { if(rainInterval) clearInterval(rainInterval); }
 
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'F2') {
-                e.preventDefault();
-                adminBox.classList.toggle('open');
-                if(adminBox.classList.contains('open')) adminInput.focus();
+        function startHuggyChaos() {
+            clearInterval(huggyInt);
+            huggyInt = setInterval(() => {
+                const h = document.createElement('img'); h.src = 'Huggy.png'; h.className = 'huggy-sprite';
+                h.style.top = Math.random()*80+'%'; h.style.left = Math.random()*80+'%';
+                document.body.appendChild(h); setTimeout(() => h.remove(), 3000);
+            }, 400);
+        }
+
+        window.onkeydown = (e) => {
+            if(e.key === 'F2') {
+                const b = document.getElementById('admin-box');
+                b.classList.toggle('open');
+                if(b.classList.contains('open')) document.getElementById('admin-input').focus();
             }
-        });
+        };
 
-        adminInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const val = adminInput.value.toUpperCase();
-                if (val === "RESET") db.ref('globalMessage').set(null);
-                else db.ref('globalMessage').set(val);
-                adminInput.value = '';
-                adminBox.classList.remove('open');
+        document.getElementById('admin-input').onkeydown = (e) => {
+            if(e.key === 'Enter') {
+                const v = e.target.value;
+                db.ref('globalMessage').set(v.toUpperCase() === "RESET" ? null : v);
+                e.target.value = '';
+                document.getElementById('admin-box').classList.remove('open');
             }
-        });
+        };
 
-        const targetDate = new Date("Feb 18, 2026 18:00:00 GMT+0100").getTime();
-        let released = false;
-
-        function update() {
+        const target = new Date("Feb 18, 2026 18:00:00 GMT+0100").getTime();
+        setInterval(() => {
             const now = new Date().getTime();
-            const diff = targetDate - now;
-
-            if (diff <= 0) {
-                if (!released) {
-                    released = true;
-                    document.getElementById("countdown").style.display = "none";
-                    header.innerHTML = "<span class='out-now-text'>OUT NOW!</span>";
-                    document.getElementById("end-buttons").innerHTML = `
-                        <a href="https://store.steampowered.com/app/4100940/Poppy_Playtime__Chapter_5/" target="_blank" class="pp-btn">DOWNLOAD GAME</a>
-                        <a href="https://www.youtube.com/@KreekCraft" target="_blank" class="pp-btn kreek-btn">WATCH KREEKCRAFT</a>
-                    `;
-                }
+            const diff = target - now;
+            
+            if(diff < 0) {
+                document.getElementById('countdown').style.display = "none";
+                document.getElementById('header-area').innerHTML = `<span class="out-now-text">OUT NOW!</span>`;
+                document.getElementById('end-buttons').style.display = "flex";
                 return;
             }
 
-            let s = Math.floor(diff / 1000), m = Math.floor(s / 60), h = Math.floor(m / 60), d = Math.floor(h / 24);
-            s %= 60; m %= 60; h %= 24;
-            document.getElementById("countdown").innerText = `${d}:${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-            
-            if (diff <= 60000 && diff > 10000) body.classList.add("cinematic-1m");
-            else if (diff <= 10000) body.classList.add("ultra-horror");
-        }
+            if (diff <= 60000 && diff > 10000) document.body.classList.add("cinematic-1m");
+            else if (diff <= 10000) {
+                document.body.classList.remove("cinematic-1m");
+                document.body.classList.add("ultra-horror");
+            }
 
-        setInterval(update, 1000);
-        update();
+            const d = Math.floor(diff / 86400000);
+            const h = Math.floor((diff % 86400000) / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            document.getElementById('countdown').innerText = `${d}:${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }, 1000);
     </script>
 </body>
 </html>
-
