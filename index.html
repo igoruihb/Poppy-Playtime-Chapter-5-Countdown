@@ -10,64 +10,62 @@
         body, html { height: 100%; margin: 0; background-color: #000; font-family: 'Press Start 2P', cursive; color: white; overflow: hidden; }
         
         /* Background & Overlays */
-        .main-bg { background-image: url('image_c53efb.jpg'); background-size: cover; background-position: center; height: 115vh; width: 115vw; position: fixed; top: -7%; left: -7%; z-index: 1; transition: all 1.5s ease; filter: brightness(0.6); }
+        .main-bg { background-image: url('image_c53efb.jpg'); background-size: cover; background-position: center; height: 115vh; width: 115vw; position: fixed; top: -7%; left: -7%; z-index: 1; transition: all 0.5s ease; filter: brightness(0.6); }
         .vignette { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, transparent 40%, black 150%); z-index: 5; pointer-events: none; }
         .strobe { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--blood-red); z-index: 7; opacity: 0; pointer-events: none; mix-blend-mode: overlay; }
-        #flashbang-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: white; z-index: 100000; opacity: 0; pointer-events: none; }
+        #flashbang-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: white; z-index: 100000; opacity: 0; pointer-events: none; transition: opacity 0.1s; }
         
         /* UI Layout */
         .overlay-content { position: relative; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; text-align: center; }
-        #header-area { transition: all 0.5s; min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 95%; }
-        .timer { font-size: 4rem; text-shadow: 3px 3px 0px var(--blood-red); margin: 20px 0; transition: all 0.5s; }
+        #header-area { transition: all 0.5s; min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 95%; opacity: 0.4; }
         
-        /* Responsive Mobile Portrait Fixes */
-        @media (max-width: 600px) {
-            .timer { font-size: 1.8rem; }
-            #header-area { min-height: 80px; font-size: 0.7rem; }
-            #chat-container { width: 220px; height: 250px; right: 10px; bottom: 10px; }
-            #admin-box { width: 95% !important; }
-            .admin-text { font-size: 0.8rem !important; }
+        /* The Big Numbers */
+        .timer { font-size: 6rem; text-shadow: 4px 4px 0px var(--blood-red); margin: 20px 0; transition: all 0.3s; transform: scale(1); }
+        
+        /* Cinematic Intensity States */
+        .cinematic-intense .main-bg { animation: cinematic-zoom 10s infinite alternate; filter: brightness(0.4) contrast(1.5); }
+        .cinematic-intense .timer { color: var(--bright-red); transform: scale(1.3); }
+        
+        .cinematic-more-intense .main-bg { animation: cinematic-zoom-shake 0.15s infinite; filter: brightness(0.3) contrast(2); }
+        .cinematic-more-intense .timer { transform: scale(1.8); animation: text-glitch 0.1s infinite; }
+        .cinematic-more-intense .strobe { animation: strobe-fast 0.1s infinite; }
+
+        /* End State UI */
+        #release-group { display: none; flex-direction: column; align-items: center; gap: 20px; z-index: 100; }
+        .out-now-text { font-size: 4rem; color: var(--bright-red); text-shadow: 5px 5px 0px white; animation: text-glitch 0.2s infinite; }
+        
+        .pp-btn { padding: 20px 30px; font-family: 'Press Start 2P'; font-size: 14px; color: white; border: 3px solid white; background: rgba(0,0,0,0.7); transition: 0.3s; cursor: pointer; text-decoration: none; display: inline-block; }
+        .pp-btn:hover { background: white; color: black; box-shadow: 0 0 30px white; }
+
+        /* Animation Keyframes */
+        @keyframes cinematic-zoom { from { transform: scale(1); } to { transform: scale(1.2); } }
+        @keyframes cinematic-zoom-shake { 
+            0%, 100% { transform: translate(0,0) scale(1.2); }
+            25% { transform: translate(8px, -8px) scale(1.22); }
+            50% { transform: translate(-8px, 8px) scale(1.2); }
         }
-
-        /* Chat UI */
-        #chat-container { position: fixed; right: 20px; bottom: 20px; width: 280px; height: 320px; background: rgba(0,0,0,0.85); border: 2px solid #222; z-index: 1000; display: none; flex-direction: column; font-size: 8px; box-shadow: 0 0 20px rgba(0,0,0,1); }
-        #chat-messages { flex-grow: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; scrollbar-width: none; }
-        .chat-msg { line-height: 1.6; border-left: 2px solid var(--blood-red); padding-left: 8px; word-wrap: break-word; }
-        .chat-user { color: var(--glitch-cyan); }
-        #chat-input { background: #111; border: none; border-top: 1px solid #333; color: white; padding: 12px; font-family: 'Press Start 2P'; font-size: 8px; outline: none; }
-
-        /* Inline Admin Text - Single Line */
-        .admin-text { 
-            color: var(--glitch-cyan); 
-            text-shadow: 2px 0 var(--bright-red), -2px 0 var(--glitch-cyan); 
-            animation: text-glitch 0.2s infinite; 
-            font-size: 1.1rem; 
-            text-transform: uppercase; 
-            display: inline-block;
-            word-break: break-word;
-            padding: 10px;
-        }
-
-        .pp-btn { padding: 15px 25px; font-family: 'Press Start 2P'; font-size: 12px; color: white; border: 3px solid white; background: rgba(0,0,0,0.5); transition: 0.3s; cursor: pointer; }
-        .pp-btn:hover { background: white; color: black; box-shadow: 0 0 20px white; }
-
-        /* Event Elements */
-        .drop { position: fixed; top: -50px; width: 3px; height: 35px; background: var(--bright-red); z-index: 99; pointer-events: none; animation: fall linear forwards; }
-        .huggy-sprite { position: fixed; width: 100px; z-index: 9; pointer-events: none; animation: run-around 3s linear infinite; }
-        #prototype-img { position: fixed; left: -600px; top: 25%; width: 450px; z-index: 9; pointer-events: none; }
-        .prototype-peek { animation: peek-out 4s forwards; }
-
-        @keyframes fall { to { transform: translateY(110vh); } }
-        @keyframes flashbang-anim { 0% { opacity: 1; } 100% { opacity: 0; } }
-        @keyframes text-glitch { 0% { transform: translate(1px, 1px); } 50% { text-shadow: 3px 0 var(--bright-red); } 100% { transform: translate(0,0); } }
+        @keyframes strobe-fast { 0%, 100% { opacity: 0; } 50% { opacity: 0.4; } }
+        @keyframes text-glitch { 0% { transform: translate(4px, 0); } 50% { text-shadow: -5px 0 var(--glitch-cyan); } 100% { transform: translate(0,0); } }
         @keyframes peek-out { 0% { left: -600px; } 20%, 80% { left: 0; } 100% { left: -600px; } }
-        @keyframes run-around { 0% { transform: translate(0,0); } 50% { transform: translate(150px, 150px); } 100% { transform: translate(0,0); } }
+        @keyframes fall { to { transform: translateY(110vh); } }
 
-        /* Admin UI */
+        /* Sprites & Mobile */
+        .huggy-sprite { position: fixed; width: 120px; z-index: 9; pointer-events: none; }
+        .drop { position: fixed; top: -50px; width: 3px; height: 35px; background: var(--bright-red); z-index: 99; pointer-events: none; animation: fall linear forwards; }
+        
+        @media (max-width: 600px) {
+            .timer { font-size: 2.2rem; }
+            .out-now-text { font-size: 1.8rem; }
+            #header-area { font-size: 0.6rem; opacity: 0.5; }
+        }
+
+        /* Admin/Chat UI */
+        #chat-container { position: fixed; right: 20px; bottom: 20px; width: 280px; height: 320px; background: rgba(0,0,0,0.85); border: 2px solid #222; z-index: 1000; display: none; flex-direction: column; font-size: 8px; }
+        #chat-messages { flex-grow: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; scrollbar-width: none; }
+        #chat-input { background: #111; border: none; border-top: 1px solid #333; color: white; padding: 12px; font-family: 'Press Start 2P'; font-size: 8px; outline: none; }
         #admin-box { position: fixed; top: -150px; left: 50%; transform: translateX(-50%); width: 450px; background: rgba(0,0,0,0.95); border: 3px solid var(--glitch-cyan); padding: 20px; z-index: 10000; transition: top 0.4s; text-align: center; }
         #admin-box.open { top: 30px; }
         #admin-input { width: 90%; background: #000; border: 1px solid #fff; color: var(--glitch-cyan); font-family: 'Press Start 2P'; padding: 10px; font-size: 10px; outline: none; }
-        .flash-active { animation: flashbang-anim 3s ease-out forwards; }
     </style>
 </head>
 <body id="b">
@@ -76,11 +74,11 @@
     <div class="main-bg"></div>
     <div class="vignette"></div>
     <div class="strobe"></div>
-    <img src="prototype.png" id="prototype-img">
+    <img src="prototype.png" id="prototype-img" style="position: fixed; left: -600px; top: 25%; width: 450px; z-index: 9; pointer-events: none;">
     
     <div id="admin-box"><input type="text" id="admin-input" placeholder="CMD OR MSG"></div>
     
-    <div id="start-screen" style="position:fixed; z-index:9999; width:100%; height:100%; display:flex; justify-content:center; align-items:center; background:black;">
+    <div id="start-screen" style="position:fixed; z-index:99999; width:100%; height:100%; display:flex; justify-content:center; align-items:center; background:black;">
         <button id="start-btn" class="pp-btn" style="font-size: 16px;">ENTER THE FINAL COUNTDOWN</button>
     </div>
 
@@ -91,10 +89,17 @@
 
     <div id="main-content" class="overlay-content" style="display:none;">
         <div id="header-area">
-            <div>POPPY PLAYTIME: CHAPTER 5</div>
-            <div style="font-size: 0.7rem; color: var(--bright-red); margin-top: 5px;">BROKEN THINGS</div>
+            <div style="letter-spacing: 5px;">POPPY PLAYTIME: CHAPTER 5</div>
+            <div id="sub-header" style="font-size: 0.8rem; color: var(--bright-red); margin-top: 10px;">BROKEN THINGS</div>
         </div>
+        
         <div id="countdown" class="timer">--:--:--</div>
+
+        <div id="release-group">
+            <div class="out-now-text">OUT NOW</div>
+            <a href="https://store.steampowered.com/app/4100940/Poppy_Playtime__Chapter_5/" target="_blank" class="pp-btn">DOWNLOAD GAME</a>
+            <a href="https://www.youtube.com/watch?v=bfu4BrHygzs" target="_blank" class="pp-btn" style="border-color: #ff0000; margin-top: 10px;">WATCH KREEEKCRAFT BEAT IT</a>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -111,7 +116,6 @@
         let rainInt, huggyInt;
         let myUser = "Subject-" + Math.floor(Math.random()*999);
 
-        // UI Start
         document.getElementById('start-btn').onclick = () => {
             document.getElementById('bgMusic').play().catch(()=>{});
             document.getElementById('start-screen').style.display = 'none';
@@ -119,60 +123,72 @@
             document.getElementById('chat-container').style.display = 'flex';
         };
 
-        // Chat Logic
-        const chatIn = document.getElementById('chat-input');
-        chatIn.onkeydown = (e) => {
-            if(e.key === 'Enter' && chatIn.value.trim()){
-                db.ref('chat').push({ user: myUser, text: chatIn.value });
-                chatIn.value = '';
+        const target = new Date("Feb 18, 2026 18:00:00 GMT+0100").getTime();
+        const countdownEl = document.getElementById('countdown');
+        const releaseGroup = document.getElementById('release-group');
+        const headerArea = document.getElementById('header-area');
+        const bodyEl = document.getElementById('b');
+
+        setInterval(() => {
+            const diff = target - new Date().getTime();
+
+            if(diff <= 0) { 
+                countdownEl.style.display = 'none';
+                headerArea.style.display = 'none';
+                releaseGroup.style.display = 'flex';
+                bodyEl.classList.remove('cinematic-intense', 'cinematic-more-intense');
+                return; 
             }
-        };
 
-        db.ref('chat').limitToLast(12).on('child_added', (s) => {
-            const d = s.val();
-            const msg = document.createElement('div');
-            msg.className = 'chat-msg';
-            msg.innerHTML = `<span class="chat-user">${d.user}:</span> ${d.text}`;
-            const box = document.getElementById('chat-messages');
-            box.appendChild(msg);
-            box.scrollTop = box.scrollHeight;
-        });
+            const d = Math.floor(diff / 86400000);
+            const h = Math.floor((diff % 86400000) / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
 
-        // Global Events & Messages
-        db.ref('globalMessage').on('value', (s) => {
-            const val = s.val();
-            if(!val) { reset(); return; }
-            processInput(val.toUpperCase(), val);
-        });
+            let parts = [];
+            if (d > 0) parts.push(d);
+            if (d > 0 || h > 0) parts.push(h.toString().padStart(2, '0'));
+            if (d > 0 || h > 0 || m > 0) parts.push(m.toString().padStart(2, '0'));
+            parts.push(s.toString().padStart(2, '0'));
+            
+            countdownEl.innerText = parts.join(':');
 
+            if (diff < 10000) { 
+                bodyEl.classList.add('cinematic-more-intense');
+                bodyEl.classList.remove('cinematic-intense');
+            } else if (diff < 60000) { 
+                bodyEl.classList.add('cinematic-intense');
+                bodyEl.classList.remove('cinematic-more-intense');
+            }
+        }, 1000);
+
+        // Events & Admin Logic
         function processInput(upper, original) {
-            // Horror Commands Logic
             if (upper === "FLASHBANG") {
                 const f = document.getElementById('flashbang-overlay');
-                f.classList.remove('flash-active'); void f.offsetWidth; f.classList.add('flash-active');
-                return;
-            }
-            if (upper === "BLOOD RAIN") { startRain(); return; }
-            if (upper === "HUGGY CHAOS") { startHuggyChaos(); return; }
-            if (upper === "PROTOTYPE") {
+                f.style.opacity = '1';
+                setTimeout(() => f.style.opacity = '0', 3000);
+            } else if (upper === "BLOOD RAIN") {
+                startRain();
+            } else if (upper === "HUGGY CHAOS") {
+                startHuggyChaos();
+            } else if (upper === "PROTOTYPE") {
                 const p = document.getElementById('prototype-img');
-                p.classList.remove('prototype-peek'); void p.offsetWidth; p.classList.add('prototype-peek');
-                return;
+                p.style.animation = 'peek-out 4s forwards';
+                setTimeout(() => p.style.animation = '', 4100);
+            } else {
+                headerArea.innerHTML = `<div style="color:var(--glitch-cyan); opacity: 1;">[ADMIN]: ${original}</div>`;
+                headerArea.style.opacity = "1";
             }
-
-            // Global Message Display (Fixed: Single Line)
-            document.getElementById('header-area').innerHTML = `<div class="admin-text">[DEV/ADMIN]: ${original}</div>`;
-            document.body.style.filter = "brightness(3)";
-            setTimeout(() => document.body.style.filter = "brightness(1)", 100);
         }
 
         function reset() {
             clearInterval(rainInt); clearInterval(huggyInt);
             document.querySelectorAll('.drop, .huggy-sprite').forEach(e => e.remove());
-            document.getElementById('header-area').innerHTML = `<div>POPPY PLAYTIME: CHAPTER 5</div><div style="font-size: 0.7rem; color: var(--bright-red); margin-top: 10px;">BROKEN THINGS</div>`;
+            headerArea.style.opacity = "0.4";
+            headerArea.innerHTML = `<div style="letter-spacing: 5px;">POPPY PLAYTIME: CHAPTER 5</div><div style="font-size: 0.8rem; color: var(--bright-red); margin-top: 10px;">BROKEN THINGS</div>`;
         }
 
-        // Event Functions
         function startRain() {
             clearInterval(rainInt);
             rainInt = setInterval(() => {
@@ -187,39 +203,47 @@
             huggyInt = setInterval(() => {
                 const h = document.createElement('img'); h.src = 'Huggy.png'; h.className = 'huggy-sprite';
                 h.style.top = Math.random()*80+'%'; h.style.left = Math.random()*80+'%';
-                document.body.appendChild(h); setTimeout(() => h.remove(), 3000);
-            }, 450);
+                document.body.appendChild(h); setTimeout(() => h.remove(), 2000);
+            }, 400);
         }
 
-        // F2 Controls
+        // Global Listeners
+        db.ref('globalMessage').on('value', (s) => {
+            const val = s.val();
+            val ? processInput(val.toUpperCase(), val) : reset();
+        });
+
+        const chatIn = document.getElementById('chat-input');
+        chatIn.onkeydown = (e) => {
+            if(e.key === 'Enter' && chatIn.value.trim()){
+                db.ref('chat').push({ user: myUser, text: chatIn.value });
+                chatIn.value = '';
+            }
+        };
+
+        db.ref('chat').limitToLast(12).on('child_added', (s) => {
+            const d = s.val();
+            const msg = document.createElement('div');
+            msg.innerHTML = `<span style="color:var(--glitch-cyan)">${d.user}:</span> ${d.text}`;
+            const box = document.getElementById('chat-messages');
+            box.appendChild(msg);
+            box.scrollTop = box.scrollHeight;
+        });
+
         window.onkeydown = (e) => {
             if(e.key === 'F2') {
-                const b = document.getElementById('admin-box');
-                b.classList.toggle('open');
-                if(b.classList.contains('open')) document.getElementById('admin-input').focus();
+                document.getElementById('admin-box').classList.toggle('open');
+                document.getElementById('admin-input').focus();
             }
         };
 
         document.getElementById('admin-input').onkeydown = (e) => {
             if(e.key === 'Enter') {
-                const v = e.target.value;
-                db.ref('globalMessage').set(v.toUpperCase() === "RESET" ? null : v);
+                db.ref('globalMessage').set(e.target.value.toUpperCase() === "RESET" ? null : e.target.value);
                 e.target.value = '';
                 document.getElementById('admin-box').classList.remove('open');
             }
         };
-
-        // Countdown Logic (Target: Feb 18, 2026)
-        const target = new Date("Feb 18, 2026 18:00:00 GMT+0100").getTime();
-        setInterval(() => {
-            const diff = target - new Date().getTime();
-            if(diff < 0) { document.getElementById('countdown').innerText = "0:00:00:00"; return; }
-            const d = Math.floor(diff / 86400000);
-            const h = Math.floor((diff % 86400000) / 3600000);
-            const m = Math.floor((diff % 3600000) / 60000);
-            const s = Math.floor((diff % 60000) / 1000);
-            document.getElementById('countdown').innerText = `${d}:${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        }, 1000);
     </script>
 </body>
 </html>
